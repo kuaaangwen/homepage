@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!--
+      This is the page head - it contains info the browser uses to display the page
+      You won't see what's in the head in the page
+      Scroll down to the body element for the page content
+    -->
+
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href="https://glitch.com/favicon.ico" />
+
+    <!-- 
+      This is an HTML comment
+      You can write text in a comment and the content won't be visible in the page
+    -->
+
+    <title>Organic Chemistry MCQ</title>
+
+    <!-- Import the webpage's stylesheet -->
+    <link rel="stylesheet" href="/style.css" />
+
+    <!-- Import the webpage's javascript file -->
+    <script src="/script.js" defer></script>
+  </head>
+  <body>
+    <div id="instructions">
+      <br /><b>Instructions:</b> <br />
+      After you submit your answer, questions with correct attempts will be in green. Incorrect attempts will be in red. <br />
+      You can retry the questions and submit again without creating a new quiz.
+      <br />
+      For a fresh set of questions, you can create a new quiz.
+    </div>
+    <br />
+
+    <div class="grid-container" id="top_part_of_page">
+      <div class="grid-item" id="chapters">
+        <h3>
+          Chapter Choices
+        </h3>
+        <label>All<input type="checkbox" id="All"/></label><br />
+        <label>Alkanes<input type="checkbox" id="Alkanes"/></label><br />
+        <label>Alkenes<input type="checkbox" id="Alkenes"/></label><br />
+        <label>Arenes<input type="checkbox" id="Arenes"/></label><br />
+        <label
+          >Halogen Derivatives<input
+            type="checkbox"
+            id="Halogen Derivatives"/></label
+        ><br />
+        <label
+          >Hydroxy Compounds<input
+            type="checkbox"
+            id="Hydroxy Compounds"/></label
+        ><br />
+        <label
+          >Carbonyl Compounds<input
+            type="checkbox"
+            id="Carbonyl Compounds"/></label
+        ><br />
+        <label
+          >Carboxylic Acids and Derivatives<input
+            type="checkbox"
+            id="Carboxylic Acids and Derivatives"/></label
+        ><br />
+        <label
+          >Nitrogen Compounds<input
+            type="checkbox"
+            id="Nitrogen Compounds"/><br /></label
+        ><br />
+      </div>
+      <div class="grid-item">
+        <div>
+          <h3>
+            Number of Questions:
+          </h3>
+          <input
+            type="number"
+            id="numberOfQuestions"
+            name="Number of Questions:"
+            min="1"
+            max="50"
+          />
+        </div>
+        <button id="createQuiz">Create Quiz</button>
+      </div>
+    </div>
+    <br />
+    <div id="quiz"></div>
+    <button id="submit">Submit Quiz</button>
+    <div id="results">Score:</div>
+    <br />
+    <button id="newQuiz">New Quiz</button>
+  </body>
+</html>
