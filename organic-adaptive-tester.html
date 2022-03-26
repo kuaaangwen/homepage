@@ -17,6 +17,10 @@
 
     <title>Organic Chemistry MCQ</title>
 
+    <!-- Import bootstrap's stylesheet and javascript file -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+
     <!-- Import the webpage's stylesheet -->
     <link rel="stylesheet" href="/css/style.css" />
 
@@ -24,71 +28,237 @@
     <script src="/js/script.js" defer></script>
   </head>
   <body>
-    <div id="instructions">
-      <br /><b>Instructions:</b> <br />
-      After you submit your answer, questions with correct attempts will be in green. Incorrect attempts will be in red. <br />
-      You can retry the questions and submit again without creating a new quiz.
-      <br />
-      For a fresh set of questions, you can create a new quiz.
-    </div>
-    <br />
+    <div class="container">
+      <div class="my-4">
+        <h1 class="text-center"><strong>Organic Chemistry MCQ</strong></h1>
+      </div>
 
-    <div class="grid-container" id="top_part_of_page">
-      <div class="grid-item" id="chapters">
-        <h3>
-          Chapter Choices
-        </h3>
-        <label>All<input type="checkbox" id="All"/></label><br />
-        <label>Alkanes<input type="checkbox" id="Alkanes"/></label><br />
-        <label>Alkenes<input type="checkbox" id="Alkenes"/></label><br />
-        <label>Arenes<input type="checkbox" id="Arenes"/></label><br />
-        <label
-          >Halogen Derivatives<input
-            type="checkbox"
-            id="Halogen Derivatives"/></label
-        ><br />
-        <label
-          >Hydroxy Compounds<input
-            type="checkbox"
-            id="Hydroxy Compounds"/></label
-        ><br />
-        <label
-          >Carbonyl Compounds<input
-            type="checkbox"
-            id="Carbonyl Compounds"/></label
-        ><br />
-        <label
-          >Carboxylic Acids and Derivatives<input
-            type="checkbox"
-            id="Carboxylic Acids and Derivatives"/></label
-        ><br />
-        <label
-          >Nitrogen Compounds<input
-            type="checkbox"
-            id="Nitrogen Compounds"/><br /></label
-        ><br />
+      <div id="instructions" class="container border border-dark border-3 py-2">
+        <h4 class="my-2 text-center"><strong>Instructions</strong></h4>
+
+        <ul>
+          <li>
+            Click on "Reset Progress Tracker" to start a personalised
+            adaptive test (the data will only be stored in your browser)
+          </li>
+          <li>
+            Please do not use incognito mode for this quiz.
+          </li>
+          <li>
+            After you submit your answer, questions with correct attempts will
+            be in green. Incorrect attempts will be in red.
+          </li>
+          <li>
+            You can retry the questions and submit again without creating a new
+            quiz.
+          </li>
+          <li>
+            For a fresh set of questions, you can click on the "Create Quiz"
+            button again.
+          </li>
+        </ul>
       </div>
-      <div class="grid-item">
-        <div>
-          <h3>
-            Number of Questions:
-          </h3>
-          <input
-            type="number"
-            id="numberOfQuestions"
-            name="Number of Questions:"
-            min="1"
-            max="50"
-          />
+
+      <div id="administrativeTools" class="d-flex container my-4">
+        <div class="col text-center">
+          <!-- Button to reset progress or start progress tracker modal -->
+
+          <button
+            type="button"
+            class="btn btn-warning mx-2 my-2"
+            onclick="progressTracker()"
+          >
+            Activate/Reset Progress Tracker
+          </button>
+
+          <!-- Button to get the progress of student -->
+
+          <button
+            type="button"
+            class="btn btn-primary mx-2 my-2"
+            id="mastery"
+            onclick="getProgress()"
+          >
+            Get Progress
+          </button>
         </div>
-        <button id="createQuiz">Create Quiz</button>
       </div>
+
+      <div
+        id="progress_display"
+        class="col text-center border border-secondary border-3"
+        style="display: none"
+      ></div>
+
+      <div id="quizCreationContainer" class="container">
+        <div class="row">
+          <div class="col my-4">
+            <h3>Chapter Choices</h3>
+
+            <div class="form-check">
+              <input
+                class="form-check-input"
+                type="checkbox"
+                value=""
+                id="All"
+              />
+              <label class="form-check-label" for="All">All</label>
+            </div>
+
+            <div class="form-check">
+              <input
+                class="form-check-input"
+                type="checkbox"
+                value=""
+                id="Alkanes"
+              />
+              <label class="form-check-label" for="Alkanes">Alkanes</label>
+            </div>
+
+            <div class="form-check">
+              <input
+                class="form-check-input"
+                type="checkbox"
+                value=""
+                id="Alkenes"
+              />
+              <label class="form-check-label" for="Alkenes">Alkenes</label>
+            </div>
+
+            <div class="form-check">
+              <input
+                class="form-check-input"
+                type="checkbox"
+                value=""
+                id="Arenes"
+              />
+              <label class="form-check-label" for="Arenes">Arenes</label>
+            </div>
+
+            <div class="form-check">
+              <input
+                class="form-check-input"
+                type="checkbox"
+                value=""
+                id="Halogen Derivatives"
+              />
+              <label class="form-check-label" for="Halogen Derivatives"
+                >Halogen Derivatives</label
+              >
+            </div>
+
+            <div class="form-check">
+              <input
+                class="form-check-input"
+                type="checkbox"
+                value=""
+                id="Hydroxy Compounds"
+              />
+              <label class="form-check-label" for="Hydroxy Compounds"
+                >Hydroxy Compounds</label
+              >
+            </div>
+
+            <div class="form-check">
+              <input
+                class="form-check-input"
+                type="checkbox"
+                value=""
+                id="Carbonyl Compounds"
+              />
+              <label class="form-check-label" for="Carbonyl Compounds"
+                >Carbonyl Compounds</label
+              >
+            </div>
+
+            <div class="form-check">
+              <input
+                class="form-check-input"
+                type="checkbox"
+                value=""
+                id="Carboxylic Acids and Derivatives"
+              />
+              <label
+                class="form-check-label"
+                for="Carboxylic Acids and Derivatives"
+                >Carboxylic Acids and Derivatives</label
+              >
+            </div>
+
+            <div class="form-check">
+              <input
+                class="form-check-input"
+                type="checkbox"
+                value=""
+                id="Nitrogen Compounds"
+              />
+              <label class="form-check-label" for="Nitrogen Compounds"
+                >Nitrogen Compounds</label
+              >
+            </div>
+
+            <!-- Button to clear checkboxes -->
+            <div class="my-3">
+              <button
+                type="button"
+                class="btn btn-danger"
+                id="clearCheckboxes"
+                onclick="clearAllCheckboxes()"
+              >
+                Clear Checkboxes
+              </button>
+            </div>
+          </div>
+
+          <div class="col my-4">
+            <div id="number_of_questions" class="container">
+              <h3>Number of Questions</h3>
+              <input
+                type="number"
+                id="numberOfQuestions"
+                name="Number of Questions:"
+                min="1"
+                max="50"
+              />
+
+              <!-- Button to create quiz -->
+              <div class="my-2">
+                <button type="button" class="btn btn-primary" id="createQuiz">
+                  Create Quiz
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div
+          id="quiz"
+          class="container border border-secondary border-3 py-2"
+          style="display: none"
+        ></div>
+      </div>
+
+      <div class="button-container-div">
+        <button
+          type="button"
+          class="btn btn-success my-3"
+          id="submit"
+          style="display: none"
+        >
+          Submit Quiz
+        </button>
+      </div>
+
+      <div class="button-container-div">
+        <div id="results" style="display: none"></div>
+      </div>
+      
+      <div class="container text-muted">
+        <p>
+          Created by Mr Chan Kuang Wen
+        </p>
+      </div>
+      
     </div>
-    <br />
-    <div id="quiz"></div>
-    <button id="submit">Submit Quiz</button>
-    <div id="results">Score:</div>
-    <br />
-    <button id="newQuiz">New Quiz</button>
   </body>
 </html>
