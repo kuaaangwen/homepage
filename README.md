@@ -1,6 +1,6 @@
 # Welcome to my page
 
-Please watch this space for my EdTech and Sustainability Projects.
+Watch this space for my EdTech and Sustainability Projects.
 
 Feel free to reach out to me if you wish to collaborate.
 
