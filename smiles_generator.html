@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>SMILES Generator</title>
+
+    <!-- Import the webpage's stylesheet -->
+    <link rel="stylesheet" href="./style.css" />
+
+    <!-- Import Kekule stylesheet -->
+    <link rel="stylesheet" type="text/css" href="./Kekule/themes/default/kekule.css" />
+
+    <!-- Import kekule.js javascript file -->
+    <script src="./kekule.min.js"></script>
+
+  </head>
+  <body>
+
+    <!-- The wrapper and content divs set margins and positioning -->
+    <div class="wrapper">
+
+        <!-- Insert title here -->
+
+        <h3 class="title">Get SMILES</h3><br>
+
+        <div id = "Teacher_Kekule"></div><br>
+
+        <div id = "Molecule_Viewer" style = "border: thin solid black" ></div><br>
+
+        <div><button onclick="get_smiles()">Get SMILES</button></div>
+
+
+        <p>SMILES Container: </p>
+        <div id="smilesContainer"></div>
+
+        <script>
+
+          // Create composer teacher widgets
+          composer_teacher = new Kekule.Editor.Composer(document.getElementById('Teacher_Kekule'));
+
+          // Set dimension
+          composer_teacher.setDimension('500px', '350px'); // Can change these sizes
+
+          // Change the UI of the editor
+
+          composer_teacher.setAllowCreateNewChild(false);
+
+          console.log("Created molecule viewers")
+
+
+          // Chemviewer widget
+          var chemViewer = new Kekule.ChemWidget.Viewer(document.getElementById('Molecule_Viewer'));
+          chemViewer.setDimension('150px', '150px');
+
+        </script>
+
+      </div>
+
+        <div class="Kekule_js">
+
+        <div id = "evaluation_container"></div>
+
+
+        <!-- Script for evaluation -->
+
+            <script>
+
+              // Get teacher SMILES and update input box
+              function get_smiles(){
+
+              // Get the SMILES of the first molecule (reference)
+
+                console.log("Getting molecule data...")
+                var molecule_ref = composer_teacher.exportObjs(Kekule.Molecule)[0];
+
+                // Save as SMILES format
+                var smiles_ref = Kekule.IO.saveFormatData(molecule_ref, 'smi')
+
+                console.log("Reference: " + smiles_ref)
+
+                molecule_data(molecule_ref)
+
+              }
+
+
+              // Update structures
+
+              function molecule_data(molecule_ref){
+
+              // Get question number
+
+              var modelNumber = document.getElementById("answer_select")
+
+              try{
+
+              // Get the SMILES of the second molecule (to mark)
+
+                console.log("Getting molecule data...")
+                var molecule_submit = composer_teacher.exportObjs(Kekule.Molecule)[0];
+
+                // Save as SMILES format
+                var smiles_submit = Kekule.IO.saveFormatData(molecule_ref, 'smi')
+
+                var teacher_cml = Kekule.IO.saveFormatData(molecule_ref, 'cml')
+
+                console.log("Submitted answers: " + smiles_submit)
+
+              }
+              catch(err){
+
+                alert("Please draw a molecule on the canvas")
+                return
+
+              }
+
+              //// set new object in viewer
+              // Insert the molecule into the viewing window
+              var myMolecule = Kekule.IO.loadFormatData(teacher_cml, 'cml');
+
+              chemViewer.setChemObj(myMolecule)
+
+              // Write out SMILES in SMILES container
+              document.getElementById("smilesContainer").innerText = smiles_submit
+
+            }
+
+            </script>
+
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
+
