@@ -12,3 +12,5 @@ https://kwen1510.github.io/webpages/smiles_generator.html
 
 # WebApp for Recyclable Materials
 https://share.streamlit.io/kwen1510/recyclenet/main/app.py
+
+<a href="https://share.streamlit.io/kwen1510/recyclenet/main/app.py">WebApp for Recyclable Materials</a>
