@@ -10,5 +10,5 @@ https://kwen1510.github.io/webpages/organic-adaptive-tester.html
 # Organic Chemistry Structures Drawing and Marking Tool
 https://kwen1510.github.io/webpages/smiles_generator.html
 
-# WebApp for Recycling
+# WebApp for Recyclable Materials
 https://share.streamlit.io/kwen1510/recyclenet/main/app.py
