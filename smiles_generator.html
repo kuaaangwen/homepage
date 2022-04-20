@@ -18,6 +18,19 @@
 
   </head>
   <body>
+    
+    <script>
+      
+      console.log("Test pull from github")
+
+      var url = 'https://raw.githubusercontent.com/kwen1510/postman/main/questions.json'
+
+      fetch(url)
+      .then(response => response.json())
+      .then(data => localStorage.setItem('questions', JSON.stringify(data)))
+      .then(console.log("Downloaded data!"))
+      
+    </script>
 
     <!-- The wrapper and content divs set margins and positioning -->
     <div class="wrapper">
