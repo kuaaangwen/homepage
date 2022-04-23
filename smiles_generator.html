@@ -23,6 +23,8 @@
       
       // set notifications
       
+      console.log("Getting notifications")
+      
           const createScheduledNotification = async (tag, title, timestamp) => {
           const registration = await navigator.serviceWorker.getRegistration();
           registration.showNotification(title, {
@@ -32,9 +34,9 @@
           });
         };
       
-      Notification.requestPermission()
+//       Notification.requestPermission()
 
-      new Notification("Welcome!")
+//       new Notification("Welcome!")
       
       console.log("Test pull from github")
 
