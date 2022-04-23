@@ -21,6 +21,12 @@
     
     <script>
       
+      // set notifications
+      
+      Notification.requestPermission()
+
+      new Notification("Welcome!")
+      
       console.log("Test pull from github")
 
       var url = 'https://raw.githubusercontent.com/kwen1510/postman/main/questions.json'
