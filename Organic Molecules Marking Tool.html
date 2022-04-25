@@ -18,108 +18,434 @@
 
   </head>
   <body>
-    
-    <script>
-      
-      console.log("Test pull from github")
-
-      var url = 'https://raw.githubusercontent.com/kwen1510/postman/main/questions.json'
-
-      fetch(url)
-      .then(response => response.json())
-      .then(data => localStorage.setItem('questions', JSON.stringify(data)))
-      .then(console.log("Downloaded data!"))
-      
-    </script>
 
     <!-- The wrapper and content divs set margins and positioning -->
     <div class="wrapper">
+      <div class="content" role="main">
 
         <!-- Insert title here -->
 
-        <h3 class="title">Get SMILES</h3><br>
+        <h3 class="title">Organic Molecules Marking Tool</h3>
 
-        <div id = "Teacher_Kekule"></div><br>
+        <p>Include some instructions here</p>
+        <ol>
+          <li>Show instructions on how to edit and add elements</li>
+          <li>Show what benzene ring looks like</li>
+          <li>Walkthrough on how to reveal answers</li>
+        </ol>
 
-        <div id = "Molecule_Viewer" style = "border: thin solid black" ></div><br>
+        <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ&ab_channel=RickAstley" target="_blank">Click on this link to watch a video tutorial on how to use this</a><br>
 
-        <div><button onclick="get_smiles()">Get SMILES</button></div>
-
-
-        <p>SMILES Container: </p>
-        <div id="smilesContainer"></div>
-
-        <script>
-
-          // Create composer teacher widgets
-          composer_teacher = new Kekule.Editor.Composer(document.getElementById('Teacher_Kekule'));
-
-          // Set dimension
-          composer_teacher.setDimension('500px', '350px'); // Can change these sizes
-
-          // Change the UI of the editor
-
-          composer_teacher.setAllowCreateNewChild(false);
-
-          console.log("Created molecule viewers")
+        <div id="question_id_box"></div>
 
 
-          // Chemviewer widget
-          var chemViewer = new Kekule.ChemWidget.Viewer(document.getElementById('Molecule_Viewer'));
-          chemViewer.setDimension('150px', '150px');
+
+        <script type="text/javascript">
+          
+          console.log("Test pull from github")
+
+          var url = 'https://raw.githubusercontent.com/kwen1510/postman/main/questions.json'
+
+          fetch(url)
+          .then(response => response.json())
+          .then(data => localStorage.setItem('questions', JSON.stringify(data)))
+          .then(console.log("Downloaded data!"))
+          .then(updateNumberOfQns())
+
+          function updateNumberOfQns(){
+
+            var allQuestions = JSON.parse(localStorage.getItem('questions'))
+            console.log(allQuestions)
+
+            var count = allQuestions['questions'].length
+
+            console.log(`Number of questions: ${count}`)
+
+            var html = '<label for="questionID">Question Number: </label><select name="questionID" id="questionID" onChange="createMoleculeViewers()"><option value="noChoice">Choose a question</option>'
+
+            for (var i = 1; i <= count; i++){
+              html += `<option value="${i}">${i}</option>`
+            }
+
+            html += '</select><br><br>'
+
+            // console.log(html)
+
+            document.getElementById("question_id_box").innerHTML = html
+
+          }
+
 
         </script>
 
-      </div>
+
+        <script type="text/javascript">
+
+          // This is a script to highlight boxes
+          function highlightBox(div_name, number){
+
+            // Unhighlight all boxes
+            unhighlight()
+
+            console.log(div_name)
+
+            // Highlight the correct boxes
+            var test_box = document.getElementById(div_name)
+            // test_box.innerText = `I clicked on the ${div_name}`
+            test_box.style.border = "3px solid #002DFF"
+
+            // Change the question number
+            document.getElementById("question").value = `${number}`
+
+          }
+
+
+          function unhighlight(){
+
+          var div = document.getElementById('molecule viewers products');
+          var divs = div.getElementsByTagName('div');
+          for (var i = 0; i < divs.length; i += 1) {
+            divs[i].style.border = "1px solid gray";
+            }
+
+          }
+
+
+        </script>
+
+        <div id ="Question choice" style="display:none"><!-- Hide this -->
+
+          <label for="question">Choose a question:</label>
+
+          <select name="question" id="question">
+          </select>
+
+        </div>
+
+        <!-- Insert molecule viewers here -->
+
+        <div id="molecule viewers" style="display:flex; flex-direction: row; justify-content: center; align-items: center"></div>
+
+        <div id = "reagents_conditions_container"></div>
+
+        <div id="molecule viewers products" style="display:flex; flex-direction: row; justify-content: center; align-items: center"></div>        
+
+
+        <div id="canvas" style="display:none">
+
+          <p><b>Draw structures here</b></p>
+
+          <div id = "Student_Kekule">
+
+            <!-- Placeholder to insert kekule stuff here -->
+
+          </div>
+
+        </div>
+
+        <!-- Button to update molecules -->
+        <div><button onclick="molecule_data()">Update Molecule</button></div>
+
+
+
+
 
         <div class="Kekule_js">
 
+          <!-- Button to mark answer -->
+          <div><button onclick="markSynthesisAnswer()" id='submitButton' style="display:none">Submit</button></div>
+
+        <div id = "Comments">
+
+          <!-- Placeholder to insert comments after comparing structures -->
+
+        </div>
+
         <div id = "evaluation_container"></div>
+
+        <div id="modelAnswerContainer" style="display:none"></div>
+
+        <button id = "revealModelAns" style="display:none" onclick="revealAnswers()">Reveal Model Answers</button>
+
+
+        <!-- Script to reveal answers -->
+
+        <script type="text/javascript">
+          
+          function revealAnswers(){
+
+            var revealAnswers = document.getElementById('revealModelAns')
+
+            if (revealAnswers.innerText == 'Reveal Model Answers'){
+
+            document.getElementById('modelAnswerContainer').style.display = "block";
+            revealAnswers.innerText = "Hide Answers"
+
+            document.getElementById('modelAnswerContainer').scrollIntoView()
+
+            }else{
+
+            document.getElementById('modelAnswerContainer').style.display = "none";
+            revealAnswers.innerText = "Reveal Model Answers"
+
+            }
+
+          }
+
+        </script>
 
 
         <!-- Script for evaluation -->
 
+          <script type="text/javascript">
+
+            // Create empty views first
+            var chemViewer1 = null
+            var chemViewer2 = null
+            var chemViewer3 = null
+            var chemViewer4 = null
+            var chemViewer5 = null
+            var chemViewer6 = null
+
+            function createMoleculeViewers(){
+
+            // Reveal canvas, button to reveal model answer and submit button
+            document.getElementById('canvas').style.display = "block";
+            document.getElementById('submitButton').style.display = "block";
+            document.getElementById('revealModelAns').style.display = "block";
+
+            ///// Get elements on page /////
+
+            var molecule_viewer_container = document.getElementById('molecule viewers')
+            var molecule_viewer_products_container = document.getElementById('molecule viewers products')
+
+            var reagents_conditions_container = document.getElementById('reagents_conditions_container')
+            var questionNumber = document.getElementById("question")
+
+            var questionID = document.getElementById("questionID").value
+
+            // Get number of questions
+            var allQuestions = JSON.parse(localStorage.getItem('questions'))
+
+            var questionContents = allQuestions['questions'][questionID-1]
+
+            console.log(questionContents)
+
+            var numberOfReactants = questionContents['reactants'].length
+
+            var numberOfProducts = questionContents['products'].length
+
+            console.log(`Number of reactants: ${numberOfReactants}`)
+
+            console.log(`Number of products: ${numberOfProducts}`)
+
+            var numberOfBoxes = numberOfProducts + numberOfReactants
+
+
+            // Get number of blanks and reagents (hard coded) - need to get from Google Drive
+            // var total_blanks = 4
+
+            // Clear molecule viewer container
+            molecule_viewer_container.innerHTML = ""
+            molecule_viewer_products_container.innerHTML = ''
+
+
+            ///// Create options in selectboxes /////
+
+            for(var number = numberOfReactants+1; number <= numberOfBoxes; number++){
+              var option = document.createElement("option");
+              option.text = `${number}`;
+              option.value = `${number}`;
+              questionNumber.appendChild(option);
+
+            }
+
+            questionNumber.value = numberOfReactants+1            
+
+            ///// Create molecule viewers /////
+
+            molecule_viewer_container.innerHTML += "<h3>Reactants: </h3>"
+
+            for(var blank = 1; blank <= numberOfReactants; blank++){
+
+              // Create molecule_viewer_container
+              var div = document.createElement('div');
+              div.id = `Molecule_Viewer${blank}`;
+              div.innerHTML = ''; // Insert blank string so I can append stuff in
+              div.className = 'border pad';
+              div.style = 'border: thin solid black';
+
+              molecule_viewer_container.appendChild(div)
+
+              // Append ChemViewer
+              var text = `chemViewer${blank} = new Kekule.ChemWidget.Viewer(document.getElementById('Molecule_Viewer${blank}'));
+              chemViewer${blank}.setDimension('150px', '150px');`
+
+              eval(text)
+
+            }
+
+            // Create products
+
+            molecule_viewer_products_container.innerHTML += "<h3>Products: </h3>"
+
+            for(var blank = numberOfReactants+1; blank <= numberOfBoxes; blank++){
+
+              // Create molecule_viewer_container
+              var div = document.createElement('div');
+              div.id = `Molecule_Viewer${blank}`;
+              div.innerHTML = ''; // Insert blank string so I can append stuff in
+              div.className = 'border pad';
+              div.style = 'border: thin solid black';
+
+              div.setAttribute(`onclick`, `highlightBox('Molecule_Viewer${blank}', ${blank})`)
+
+              molecule_viewer_products_container.appendChild(div)
+
+              // Append ChemViewer
+              var text = `chemViewer${blank} = new Kekule.ChemWidget.Viewer(document.getElementById('Molecule_Viewer${blank}'));
+              chemViewer${blank}.setDimension('150px', '150px');`
+
+              eval(text)
+
+            }
+
+
+            // Create model answers
+
+              var modelAnswerContainer = document.getElementById("modelAnswerContainer")
+
+              for(var blank = numberOfBoxes+1; blank <= numberOfBoxes+numberOfProducts; blank++){
+
+              // Create molecule_viewer_container
+              var div = document.createElement('div');
+              div.id = `Molecule_Viewer${blank}`;
+              div.innerHTML = ''; // Insert blank string so I can append stuff in
+              div.className = 'border pad';
+              div.style = 'border: thin solid black';
+
+              modelAnswerContainer.appendChild(div)
+
+              // Append ChemViewer
+              var text = `chemViewer${blank} = new Kekule.ChemWidget.Viewer(document.getElementById('Molecule_Viewer${blank}'));
+              chemViewer${blank}.setDimension('150px', '150px');`
+
+              eval(text)
+
+            }
+
+            console.log("Created molecule viewers")
+
+            // Populate the reactant
+            for (var reactant=1; reactant <= numberOfReactants; reactant++){
+
+              var student_cml = allQuestions['questions'][questionID-1]['reactants'][reactant-1]
+
+              // console.log(student_cml)
+
+              var myMolecule = Kekule.IO.loadFormatData(student_cml, 'cml')
+
+              // console.log(`Setting chem viewer ${reactant}`)
+
+              var text = `chemViewer${reactant}.setChemObj(myMolecule)`
+
+              eval(text)
+
+            }
+
+            var productSmiles = []
+
+            // Populate the answers
+            for (var product=1; product <= numberOfProducts; product++){
+
+              var teacher_cml = allQuestions['questions'][questionID-1]['products'][product-1]
+
+              // console.log(student_cml)
+
+              var myMolecule = Kekule.IO.loadFormatData(teacher_cml, 'cml')
+
+              // console.log(`Setting chem viewer ${reactant}`)
+
+              var boxNumber = numberOfBoxes + product
+
+              var text = `chemViewer${boxNumber}.setChemObj(myMolecule)`
+
+              eval(text)
+
+              var productSmile = Kekule.IO.saveFormatData(myMolecule, 'smi')
+
+              productSmiles.push(productSmile)
+
+            }            
+
+            console.log("Products")
+            console.log(productSmiles)
+
+            // Store product SMILES in local storage
+            localStorage.setItem("productSMILES", JSON.stringify(productSmiles))
+
+
+            // Select first molecule viewer for product
+
+            highlightBox(`Molecule_Viewer${numberOfReactants+1}`, numberOfReactants+1)
+
+            // Add in the reagents
+            var reagents = allQuestions['questions'][questionID-1]['reagents']
+
+            document.getElementById('reagents_conditions_container').innerHTML = `<br><b>Reagents and conditions: </b>${reagents}<br><br>`
+
+          }
+
+        </script>
+
+
+
+
+
             <script>
 
-              // Get teacher SMILES and update input box
-              function get_smiles(){
+              // Create composer student widgets
+              var composer_student = new Kekule.Editor.Composer(document.getElementById('Student_Kekule'));
 
-              // Get the SMILES of the first molecule (reference)
+              // Set dimension
+              composer_student.setDimension('300px', '300px');
 
-                console.log("Getting molecule data...")
-                var molecule_ref = composer_teacher.exportObjs(Kekule.Molecule)[0];
-
-                // Save as SMILES format
-                var smiles_ref = Kekule.IO.saveFormatData(molecule_ref, 'smi')
-
-                console.log("Reference: " + smiles_ref)
-
-                molecule_data(molecule_ref)
-
-              }
+            // Change the UI of the editor
+              composer_student.setCommonToolButtons(['undo','redo','zoomIn', 'zoomOut'])
 
 
-              // Update structures
+              // Comment the next line out to get all functions
+              composer_student.setChemToolButtons(['manipulate','erase','bond','atomAndFormula','ring','charge'])
 
-              function molecule_data(molecule_ref){
+            </script>
+
+            <script>
+
+              // Update student structures
+
+              function molecule_data(){
 
               // Get question number
 
-              var modelNumber = document.getElementById("answer_select")
+              var questionNumber = document.getElementById("question")
+
+              console.log(questionNumber.value)
 
               try{
 
               // Get the SMILES of the second molecule (to mark)
 
                 console.log("Getting molecule data...")
-                var molecule_submit = composer_teacher.exportObjs(Kekule.Molecule)[0];
+                var molecule_submit = composer_student.exportObjs(Kekule.Molecule)[0];
 
                 // Save as SMILES format
-                var smiles_submit = Kekule.IO.saveFormatData(molecule_ref, 'smi')
+                var smiles_submit = Kekule.IO.saveFormatData(molecule_submit, 'smi')
 
-                var teacher_cml = Kekule.IO.saveFormatData(molecule_ref, 'cml')
+                var student_cml = Kekule.IO.saveFormatData(molecule_submit, 'cml')
 
                 console.log("Submitted answers: " + smiles_submit)
+
+                // console.log("Student_cml: " + student_cml)
 
               }
               catch(err){
@@ -130,15 +456,212 @@
               }
 
               //// set new object in viewer
-              // Insert the molecule into the viewing window
-              var myMolecule = Kekule.IO.loadFormatData(teacher_cml, 'cml');
+              // Insert the student answer into the viewing window
+              var myMolecule = Kekule.IO.loadFormatData(student_cml, 'cml');
 
-              chemViewer.setChemObj(myMolecule)
+              // Choose which chemviewer to insert based on selectbox
 
-              // Write out SMILES in SMILES container
-              document.getElementById("smilesContainer").innerText = smiles_submit
+              ///////// After creating, can highlight the first box ///////////
+
+              var allQuestions = JSON.parse(localStorage.getItem('questions'))         
+
+              var questionID = document.getElementById("questionID").value
+
+              var numberOfProducts = allQuestions['questions'][questionID-1]['products'].length
+
+              var numberOfReactants = allQuestions['questions'][questionID-1]['reactants'].length
+
+              var numberOfBoxes = numberOfReactants + numberOfProducts
+
+              var value = parseInt(questionNumber.value)+1
+
+              text = `chemViewer${questionNumber.value}.setChemObj(myMolecule); if(value < numberOfBoxes+1){questionNumber.value = ${value}; highlightBox('Molecule_Viewer${value}', ${value})}`
+
+              eval(text)
+
+              // Delete the items on the student canvas
+              //composer_student.newDoc()
+
 
             }
+
+
+
+            function markSynthesisAnswer(){
+
+              var feedbackBox = document.getElementById("evaluation_container")
+              feedbackBox.innerHTML = ''
+
+              var allQuestions = JSON.parse(localStorage.getItem('questions'))
+
+              // console.log(allQuestions)             
+
+              var questionID = document.getElementById("questionID").value
+
+              // console.log(questionID) 
+
+              var numberOfProducts = allQuestions['questions'][questionID-1]['products'].length
+
+              var numberOfReactants = allQuestions['questions'][questionID-1]['reactants'].length
+
+              var numberOfBoxes = numberOfReactants + numberOfProducts
+
+              var model_ans_array = JSON.parse(localStorage.getItem('productSMILES'))
+
+              console.log("Model answers:")
+              console.log(model_ans_array)
+
+              // Get model answers if it exists
+
+              var molecules_submission = []
+
+              for (var idx = numberOfReactants+1; idx <= numberOfBoxes; idx++){
+
+                var text = `var molecule = chemViewer${idx}.getChemObj(); var submit = Kekule.IO.saveFormatData(molecule, 'smi'); console.log(submit)`
+
+                eval(text)
+
+                molecules_submission.push(submit)
+
+              }
+
+              console.log("Submission array: ")
+              console.log(molecules_submission)
+
+
+              // Compare answers here
+
+              console.log("Comparing answers...")
+
+
+              let difference = model_ans_array.filter(x => !molecules_submission.includes(x));
+
+              console.log(difference)
+
+              var numberOfIncorrect = difference.length
+
+              if (numberOfIncorrect == 0){
+
+                console.log("All answers correct!")
+                feedbackBox.innerHTML = `All answers correct!`
+                feedbackBox.style.color = "green"
+
+              }else{
+
+                console.log(`${numberOfIncorrect} incorrect answers`)
+                feedbackBox.innerHTML = `${numberOfIncorrect} incorrect answers`
+                feedbackBox.style.color = "red"
+
+              }
+
+              feedbackBox.scrollIntoView()
+
+
+              // for(var index in molecules_submission){
+
+              //   var answer = molecules_submission[index]
+
+              //   if(model_ans_array.includes(answer)){
+
+              //     var answerIndex = model_ans_array.indexOf(answer)
+
+              //     model_ans_array.splice(answerIndex,1)
+
+              //     console.log(model_ans_array)
+
+              //   }else{
+
+              //     console.log("None of the answers are correct")
+
+              //   }
+
+
+              // }
+
+
+    }
+
+              // var molecules_wrong_answers = []
+
+              // for (var idx = 0; idx < total_blanks; idx++){
+
+              //   if(molecules_answer_array[idx] != molecules_submission[idx]){
+
+              //     var wrong_idx = idx + 1
+
+              //     molecules_wrong_answers.push(wrong_idx)
+              //   }
+
+              // }
+
+              // console.log(molecules_wrong_answers)
+
+
+            //   var reagents_submission = []
+
+            //   // Do the same thing again for reagents and conditions
+
+            //   var total_reagents = 4
+
+            //   for (var idx = 1; idx <= total_reagents; idx++){
+
+            //     var text = `var submit = document.getElementById('input_div_${idx}').innerText`
+
+            //     eval(text)
+
+            //     reagents_submission.push(submit)
+
+            //   }            
+
+            //   console.log("Reagents submission: " + reagents_submission) 
+
+            //   // Compare answers here
+
+            //   console.log(reagents_answer_array)
+
+            //   console.log("Comparing answers...")
+
+            //   var reagents_wrong_answers = []
+
+            //   for (var idx = 0; idx < total_blanks; idx++){
+
+            //     if(reagents_answer_array[idx] != reagents_submission[idx]){
+
+            //       var wrong_idx = idx + 1
+
+            //       reagents_wrong_answers.push(wrong_idx)
+            //     }
+
+            //   }
+
+            //   console.log(reagents_wrong_answers)
+
+
+
+            //   // Can run a loop to check answers, then push to array and print out structures that are incorrect. If incorrect == null, then "All correct!"
+
+            //   // Can also check the length of the array. If array.length = 1, use singular.
+
+
+            //   // If all correct, say good job
+            //   if(reagents_wrong_answers.length == 0 && molecules_wrong_answers.length ==0 ){
+
+            //   var comment_box = document.getElementById('Comments')
+
+            //   comment_box.innerHTML = "<font color = '#008000'>All correct! Great job!</font>" // Can change colour here
+
+            //     return
+
+            //   }
+              
+            //   var comment = "<font color = '#FF0000'>Molecule(s) " + molecules_wrong_answers.join(", ") + " is/are incorrect.<br>Reagent(s) " + reagents_wrong_answers.join(", ") + " is/are incorrect.<br>Try again.</font>"
+
+
+            //   var comment_box = document.getElementById('Comments')
+
+            //   comment_box.innerHTML = comment // Can change colour here
+
+            // }
 
             </script>
 
