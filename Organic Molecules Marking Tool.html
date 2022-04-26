@@ -449,10 +449,8 @@
 
               }
               catch(err){
-
-                alert("Please draw a molecule on the canvas")
-                return
-
+                // If nothing is in the canvas, delete the molecule viewer
+                student_cml = ''
               }
 
               //// set new object in viewer
