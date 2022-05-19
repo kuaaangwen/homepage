@@ -1,20 +1,61 @@
 <!doctype HTML>
+
 <html>
     <head>
          <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
          <script src="https://aframe.io/releases/1.0.4/aframe.min.js"></script>
          <script src="https://raw.githack.com/jeromeetienne/AR.js/2.2.1/aframe/build/aframe-ar.js"></script>
-         <script src="https://raw.githack.com/fcor/arjs-gestures/master/dist/gestures.js"></script>
     </head>
 
     <body style='margin : 0px; overflow: hidden;'>
-        <a-scene embedded arjs='sourceType: webcam; debugUIEnabled: true;'>
 
-            <a-marker preset='custom' type='pattern' url='demo.patt'>
-            <a-entity gltf-model="demo.gltf"></a-entity>
-            </a-marker>
-            <a-entity camera></a-entity>
+        <a-scene
+          arjs
+          embedded
+          renderer="logarithmicDepthBuffer: true;"
+          vr-mode-ui="enabled: false"
+          gesture-detector
+          id="scene"
+        >
+          <a-assets>
+            <a-asset-item
+              id="demo"
+              src="demo.gltf"
+            >
+            </a-asset-item>
+          </a-assets>
+
+          <a-marker
+            preset='custom' 
+            type='pattern' 
+            url='demo.patt'
+            raycaster="objects: .clickable"
+            emitevents="true"
+            cursor="fuse: false; rayOrigin: mouse;"
+            id="markerA"
+          >
+            <a-entity
+              id="demo-model"
+              gltf-model="#demo"
+              position="0 0 0"
+              scale="0.05 0.05 0.05"
+              class="clickable"
+              gesture-handler
+            >
+            </a-entity>
+          </a-marker>
+          <a-entity camera></a-entity>
         </a-scene>
     </body>
  </html>
-<!-- Source: https://medium.com/@fauziali/creating-web-based-augmented-reality-with-just-10-lines-of-html-code-for-beginners-ar-js-d62ef596eab -->
+
+
+
+<!-- 
+
+Custom Marker (source): https://stackoverflow.com/questions/47644935/how-to-create-custom-marker-in-ar-js 
+
+Create custome marker: https://jeromeetienne.github.io/AR.js/three.js/examples/marker-training/examples/generator.html
+
+Interaction: https://github.com/fcor/arjs-gestures
+
