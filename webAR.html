@@ -52,6 +52,44 @@
  </html>
 
 
+<!-- Second image -->
+        <a-scene
+          arjs
+          embedded
+          renderer="logarithmicDepthBuffer: true;"
+          vr-mode-ui="enabled: false"
+          gesture-detector
+          id="scene"
+        >
+          <a-assets>
+            <a-asset-item
+              id="demo"
+              src="demo.gltf"
+            >
+            </a-asset-item>
+          </a-assets>
+
+          <a-marker
+            preset='custom' 
+            type='pattern' 
+            url='demo.patt'
+            raycaster="objects: .clickable"
+            emitevents="true"
+            cursor="fuse: false; rayOrigin: mouse;"
+            id="markerA"
+          >
+            <a-entity
+              id="demo-model"
+              gltf-model="#demo"
+              position="0 0 0"
+              scale="0.5 0.5 0.5"
+              class="clickable"
+              gesture-handler
+            >
+            </a-entity>
+          </a-marker>
+          <a-entity camera></a-entity>
+        </a-scene>
 
 <!-- 
 
