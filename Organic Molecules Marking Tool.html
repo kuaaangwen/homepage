@@ -17,7 +17,8 @@
     <script src="/js/kekule.min.js"></script>
 
   </head>
-  <body>
+
+    <body>
 
     <!-- The wrapper and content divs set margins and positioning -->
     <div class="wrapper">
@@ -27,59 +28,510 @@
 
         <h3 class="title">Organic Molecules Marking Tool</h3>
 
-        <p>Include some instructions here</p>
+        <h4>Instructions</h4>
         <ol>
-          <li>Show instructions on how to edit and add elements</li>
-          <li>Show what benzene ring looks like</li>
-          <li>Walkthrough on how to reveal answers</li>
+          <li>Please watch the video tutorial before you begin</li>
+          <li>Select the chapters you want to revise</li>
+          <li>Choosing "All Chapters" will give you 10 random questions</li>
+          <li>Click on "Create Questions"</li>
+          <li>Draw the molecule on the canvas</li>
+          <li>Only draw the answers for the organic products</li>
+          <li>Click on "Update Molecule" to update the product in the highlighted box</li>
+          <li>Click on "Submit" to check your answers</li>
+          <li>If you are stuck, click on "Reveal Model Answers" to show the answers</li>
+          <li>Click on "Next" to move to the next question</li>
+          
         </ol>
 
+        <a href = "https://forms.gle/95vtk9scHLH6Bxk5A">In case of error, please report using this link</a>
+        <br>
         <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ&ab_channel=RickAstley" target="_blank">Click on this link to watch a video tutorial on how to use this</a><br>
 
-        <div id="question_id_box"></div>
+    <div id = "chapterSelectionDiv">
+      <h3>Select chapters: </h3>
+
+      <!-- Insert all chapter selections here -->
+    
+    </div><br>
+
+    <div id="question_id_box"></div><br>
+
+    <button onclick="createQuestions()" id="createQnBtn">Create Questions</button><br>
+
+    <div id="numberOfQuestions" style="display:none"></div><br>
+
+    <div id="placeholder"></div>
 
 
 
-        <script type="text/javascript">
-          
-          console.log("Test pull from github")
 
-          var url = 'https://raw.githubusercontent.com/kwen1510/postman/main/questions.json'
 
-          fetch(url)
-          .then(response => response.json())
-          .then(data => localStorage.setItem('questions', JSON.stringify(data)))
-          .then(console.log("Downloaded data!"))
-          .then(updateNumberOfQns())
 
-          function updateNumberOfQns(){
+    <!-- Div for Kekule drawing tools -->
 
-            var allQuestions = JSON.parse(localStorage.getItem('questions'))
-            console.log(allQuestions)
+        <div id ="Question choice" style="display:none"><!-- Hide this -->
 
-            var count = allQuestions['questions'].length
+          <label for="question">Choose a question:</label>
 
-            console.log(`Number of questions: ${count}`)
+          <select name="question" id="question">
+          </select>
 
-            var html = '<label for="questionID">Question Number: </label><select name="questionID" id="questionID" onChange="createMoleculeViewers()"><option value="noChoice">Choose a question</option>'
+        </div>
 
-            for (var i = 1; i <= count; i++){
-              html += `<option value="${i}">${i}</option>`
+        <div id="drawingToolsBigDiv">
+
+          <!-- Insert molecule viewers here -->
+
+          <div id="molecule viewers" style="display:flex; flex-direction: row; justify-content: center; align-items: center"></div>
+
+          <div id = "reagents_conditions_container"></div>
+
+          <div id="molecule viewers products" style="display:flex; flex-direction: row; justify-content: center; align-items: center"></div>        
+
+
+          <div id="canvas" style="display:none">
+
+            <p><b>Draw structures here</b></p>
+
+            <div id = "Student_Kekule">
+
+              <!-- Placeholder to insert kekule stuff here -->
+
+            </div>
+
+          </div>
+
+          <!-- Button to update molecules -->
+          <div><button onclick="molecule_data()" id = "updateMoleculeButton" style="display:none">Update Molecule</button></div>
+
+
+
+
+
+          <div class="Kekule_js">
+
+            <!-- Button to mark answer -->
+            <div><button onclick="markSynthesisAnswer()" id='submitButton' style="display:none">Submit</button></div>
+
+          <div id = "Comments">
+
+            <!-- Placeholder to insert comments after comparing structures -->
+
+          </div>
+
+          <div id = "evaluation_container"></div>
+
+          <div id="modelAnswerContainer" style="display:none"></div>
+
+          <button id = "revealModelAns" style="display:none" onclick="revealAnswers()">Reveal Model Answers</button>
+
+          <button onclick="nextQuestion()" id="nextBtn" style="display:none">Next >></button>
+        
+        </div>    
+
+    <script type="text/javascript">
+
+      // Declare global variables
+      var totalNumberOfQuestions = 1;
+
+      // Get button elements
+      var createQnBtn = document.getElementById('createQnBtn')
+      var nextButton = document.getElementById("nextBtn")
+      var checkBoxDiv = document.getElementById("chapterSelectionDiv")
+      var updateMoleculeBtn = document.getElementById("updateMoleculeButton")
+      var feedbackBox = document.getElementById("evaluation_container")
+
+      // Get div elements
+      var numberOfQuestionsDiv = document.getElementById("numberOfQuestions");
+      var drawingToolsBigDiv = document.getElementById("drawingToolsBigDiv")
+
+      // Insert library here
+      console.log("Data pulled from github")
+
+      var url = 'https://raw.githubusercontent.com/kwen1510/postman/main/questions.json'
+
+      fetch(url)
+      .then(response => response.json())
+      .then(data => localStorage.setItem('questions', JSON.stringify(data)))
+      .then(console.log("Downloaded data!"))
+      // .then(updateNumberOfQns())
+
+
+      // Get the whole list of questions
+      var fullDataset = JSON.parse(localStorage.getItem('questions'))
+      console.log(fullDataset)
+
+      function updateNumberOfQns(listOfQuestions){
+
+        console.log(listOfQuestions)
+
+        var count = listOfQuestions.length
+
+        console.log(`Number of questions: ${count}`)
+
+        var html = '<select name="questionID" id="questionID" onChange="createMoleculeViewers()" style="display:none">'
+
+        for (var i = 0; i < count; i++){
+
+          var optionValue = listOfQuestions[i]
+
+          if (i == 0){
+            html += `<option value="${optionValue}">${optionValue}</option>`
+          }else{
+            html += `<option value="${optionValue}">${optionValue}</option>`
+          }
+        }
+
+        html += '</select><br><br>'
+
+        // console.log(html)
+
+        document.getElementById("question_id_box").innerHTML = html
+
+      }
+
+      // Global variable list of chapters
+      var listOfChapters = ['Alkanes','Alkenes','Arenes','Halogen Derivatives','Hydroxy Compounds','Carbonyl Compounds','Carboxylic Acids and Derivatives','Nitrogen Compounds']
+
+      // Function to unselect all other checkboxes
+      function unselectAllCheckboxes(forReset = false){
+
+        const selectAllCheckBox = document.getElementById(`All Chapters`);
+
+        if (selectAllCheckBox.checked == true){
+
+          // Unselect all checkboxes
+          for (index in listOfChapters){
+
+            var title = listOfChapters[index]
+
+            // console.log(title)
+
+            const selectedCheckBox = document.getElementById(`${title}`);
+
+            selectedCheckBox.checked = false
+
+            // console.log(selectedCheckBox.checked)
+
+          }
+
+        }
+
+        if (forReset == true){
+
+          const selectAllCheckBox = document.getElementById(`All Chapters`);
+
+          selectAllCheckBox.checked = false        	
+
+          // Unselect all checkboxes
+          for (index in listOfChapters){
+
+            var title = listOfChapters[index]
+
+            // console.log(title)
+
+            const selectedCheckBox = document.getElementById(`${title}`);
+
+            selectedCheckBox.checked = false
+
+        }
+
+       }
+
+      }
+
+      // Function to unselect "All Chapters" checbox
+      function unselectAllChaptersCheckboxes(){
+
+        const selectAllCheckBox = document.getElementById(`All Chapters`);
+
+        selectAllCheckBox.checked = false
+
+      }
+
+      // Function to create checkboxes
+      function createCheckBox(title, runOnClick = false){
+
+        // Create molecule_viewer_container
+        var div = document.createElement('div');
+        div.class = 'form-check'
+        div.id = `${title}Div`;
+        div.innerHTML = `<input class="form-check-input" type="checkbox" id="${title}"/><label class="form-check-label" for="${title}">${title}</label>`
+
+        if (runOnClick == true){
+          div.setAttribute(`onclick`, "unselectAllCheckboxes()")
+        }
+
+        if (runOnClick == false){
+          div.setAttribute(`onclick`, "unselectAllChaptersCheckboxes()")
+        }
+
+        checkBoxDiv.appendChild(div)
+
+      }
+
+      // Create a "All chapters" checkbox that will remove the rest on click
+      createCheckBox("All Chapters", true)
+
+      // For chapter in list of chapters, create a new checkbox
+      for (index in listOfChapters){
+
+        var chapter = listOfChapters[index]
+
+        createCheckBox(chapter)
+
+      }
+
+      // Create onSubmission code 
+      function createQuestions(){
+
+        // Make consoles disappear
+        createQnBtn.style.display = "none"
+        checkBoxDiv.style.display = "none"
+        drawingToolsBigDiv.style.display = "block"
+        updateMoleculeBtn.style.display = "block"
+
+        console.log("Populating the database from local storage")
+
+        var dataset = JSON.parse(localStorage.getItem('questions'))
+
+        console.log("Creating questions")
+
+        // Check if "All checkboxes" checked
+        const selectAllCheckBox = document.getElementById(`All Chapters`);
+
+        var questionIDList = []
+
+        if (selectAllCheckBox.checked == true){
+
+          console.log("All chapters selected")
+
+          for (i in dataset['questions']){
+
+            console.log(dataset['questions'][i]['topic'])
+
+            var questionID = dataset['questions'][i]['id']
+
+            questionID = questionID
+
+            questionIDList.push(questionID)
+
+            //Get the top n questions
+            var n = 10;
+            questionIDList = questionIDList.slice(0, n)
+
+          totalNumberOfQuestions = questionIDList.length
+
+          }
+
+          console.log(questionIDList)
+
+        }else{
+
+          // Gather a list of checked topics
+          var checkedTopics = []
+
+          for (index in listOfChapters){
+
+            var title = listOfChapters[index]
+
+            if(document.getElementById(`${title}`).checked == true){
+
+              checkedTopics.push(title)
+
             }
 
-            html += '</select><br><br>'
+          }
 
-            // console.log(html)
+          console.log("Checked topics:")
+          console.log(checkedTopics)
 
-            document.getElementById("question_id_box").innerHTML = html
+          checkedTopics = checkedTopics.map(element => {return element.toLowerCase()});
+
+          // Loop through all checkboxes and include question ID if chapter is included
+          for (i in dataset['questions']){
+
+            var questionChapter = dataset['questions'][i]['topic'].toLowerCase()
+
+            // console.log(questionChapter)
+
+            if (checkedTopics.includes(questionChapter)){
+
+              var questionID = dataset['questions'][i]['id']
+
+              questionIDList.push(questionID)
+
+            }
+
+          }
+
+          console.log("Selected question ID list")
+          console.log(questionIDList)
+
+          totalNumberOfQuestions = questionIDList.length
+
+        }
+
+
+        // Reshuffle questions
+
+        var reshuffledIDs = shuffle(questionIDList)
+
+        // display number of questions
+        numberOfQuestionsDiv.style.display = "block"
+        numberOfQuestionsDiv.innerHTML = `Question number 1/${reshuffledIDs.length}<br>Question ID: ${reshuffledIDs[0]}`
+
+        console.log("Reshuffled IDs")
+        console.log(reshuffledIDs)
+
+        // Populate questions list
+        updateNumberOfQns(reshuffledIDs)
+
+        // Reveal "next button"
+        nextButton.style.display = "block"
+
+        /////// Create all questions //////////
+				createMoleculeViewers()
+
+        // Scroll into view the question
+        numberOfQuestionsDiv.scrollIntoView()
+
+
+        // // Populate questions (test)
+
+        // var placeholder = document.getElementById('placeholder')
+
+        // var placeholderTextArray = []
+
+        // for (item in reshuffledIDs){
+
+        //   var questionIndex = reshuffledIDs[item]
+
+        //   var questionContent = dataset['questions'][questionIndex]['topic']
+
+        //   placeholderTextArray.push(questionContent)
+
+        // }
+
+        // // Join text in placeholderTextArray
+
+        // var placeholderText = placeholderTextArray.join('<br>')
+
+        // placeholder.innerHTML = placeholderText
+
+      }
+
+
+      function shuffle(array) {
+        let currentIndex = array.length,  randomIndex;
+
+        // While there remain elements to shuffle.
+        while (currentIndex != 0) {
+
+          // Pick a remaining element.
+          randomIndex = Math.floor(Math.random() * currentIndex);
+          currentIndex--;
+
+          // And swap it with the current element.
+          [array[currentIndex], array[randomIndex]] = [
+            array[randomIndex], array[currentIndex]];
+        }
+
+        return array;
+      }
+
+      // Move to previous question
+      function nextQuestion(){
+
+        // Scroll into view the question
+        numberOfQuestionsDiv.scrollIntoView()
+
+        console.log("Next Question")
+
+        var selectBox = document.getElementById("questionID")
+
+        try{
+
+          console.log(`Removed question number ${selectBox.options[0].value}`)
+
+          selectBox.removeChild(selectBox.options[0])
+
+          var selectValue = selectBox.options[0]
+
+          var currentQnID = selectBox.options[0].value
+
+        }catch{var selectValue = undefined}
+
+        if (selectValue == undefined){
+          console.log("No other questions to remove")
+          alert("End of quiz! Please select another set of questions")
+
+          // Reset all buttons
+          createQnBtn.style.display = "block"
+          nextButton.style.display = "none"
+          numberOfQuestionsDiv.style.display = "none"
+          checkBoxDiv.style.display = "block"
+          drawingToolsBigDiv.style.display = "none"
+          updateMoleculeBtn.style.display = "none"
+          feedbackBox.style.display = "none"
+
+          nextButton.innerText = "Next >>"
+
+          // Clear the contents of the canvas
+          try{
+          	composer_student.newDoc()
+          }catch{
+          	console.log("No composer student detected")
+          }
+
+          // Clear all checkboxes
+          unselectAllCheckboxes(true)
+        }else{
+
+          // Clear the contents of the canvas
+          try{
+            composer_student.newDoc()
+          }catch{
+            console.log("No composer student detected")
+          }
+
+          // Clear feedback box
+          feedbackBox.style.display = "none"
+
+          // Create molecule viewers
+          createMoleculeViewers()
+
+          // console.log(totalNumberOfQuestions)
+
+          // Increment number of questions
+          var numQnLeft = selectBox.options.length
+          var currentQuestion = totalNumberOfQuestions - numQnLeft + 1;
+
+          numberOfQuestionsDiv.innerHTML = `Question number ${currentQuestion}/${totalNumberOfQuestions}<br>Question ID: ${currentQnID}`
+
+
+          // Change Next to End Quiz when at last question
+          if (currentQuestion == totalNumberOfQuestions){
+
+            nextButton.innerText = "End Quiz"
 
           }
 
 
-        </script>
+        }
+
+      }
 
 
-        <script type="text/javascript">
+      // function createMoleculeViewers(){
+      //   console.log("Created molecule viewers")
+
+      // }
+
+    </script>
+
+
+  	      <script type="text/javascript">
 
           // This is a script to highlight boxes
           function highlightBox(div_name, number){
@@ -113,59 +565,6 @@
 
         </script>
 
-        <div id ="Question choice" style="display:none"><!-- Hide this -->
-
-          <label for="question">Choose a question:</label>
-
-          <select name="question" id="question">
-          </select>
-
-        </div>
-
-        <!-- Insert molecule viewers here -->
-
-        <div id="molecule viewers" style="display:flex; flex-direction: row; justify-content: center; align-items: center"></div>
-
-        <div id = "reagents_conditions_container"></div>
-
-        <div id="molecule viewers products" style="display:flex; flex-direction: row; justify-content: center; align-items: center"></div>        
-
-
-        <div id="canvas" style="display:none">
-
-          <p><b>Draw structures here</b></p>
-
-          <div id = "Student_Kekule">
-
-            <!-- Placeholder to insert kekule stuff here -->
-
-          </div>
-
-        </div>
-
-        <!-- Button to update molecules -->
-        <div><button onclick="molecule_data()">Update Molecule</button></div>
-
-
-
-
-
-        <div class="Kekule_js">
-
-          <!-- Button to mark answer -->
-          <div><button onclick="markSynthesisAnswer()" id='submitButton' style="display:none">Submit</button></div>
-
-        <div id = "Comments">
-
-          <!-- Placeholder to insert comments after comparing structures -->
-
-        </div>
-
-        <div id = "evaluation_container"></div>
-
-        <div id="modelAnswerContainer" style="display:none"></div>
-
-        <button id = "revealModelAns" style="display:none" onclick="revealAnswers()">Reveal Model Answers</button>
 
 
         <!-- Script to reveal answers -->
@@ -206,6 +605,7 @@
             var chemViewer4 = null
             var chemViewer5 = null
             var chemViewer6 = null
+            var composer_student = null
 
             function createMoleculeViewers(){
 
@@ -414,7 +814,7 @@
               composer_student.setDimension('300px', '300px');
 
             // Change the UI of the editor
-              composer_student.setCommonToolButtons(['undo','redo','zoomIn', 'zoomOut'])
+              composer_student.setCommonToolButtons(['newDoc','undo','redo','zoomIn', 'zoomOut'])
 
 
               // Comment the next line out to get all functions
@@ -490,7 +890,7 @@
 
             function markSynthesisAnswer(){
 
-              var feedbackBox = document.getElementById("evaluation_container")
+              feedbackBox.style.display = "block"
               feedbackBox.innerHTML = ''
 
               var allQuestions = JSON.parse(localStorage.getItem('questions'))
@@ -570,6 +970,6 @@
         <p>Created by Chan Kuang Wen</p>
         <p><a href="https://github.com/partridgejiang/Kekule.js" target="_blank">Credits: partridgejiang.github.io/kekule.js for chem viewer and composer</a></p>
     </footer>
+    
   </body>
 </html>
-
